@@ -60,7 +60,7 @@
 
 @layer base {
 	* {
-		@apply border-border;
+		@apply p-0 m-0 border-border;
 	}
 	body {
 		@apply bg-background text-foreground;
