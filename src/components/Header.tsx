@@ -1,4 +1,5 @@
 import {Link} from "react-router-dom";
+import MainNav from "./MainNav";
 import MobileNav from "./MobileNav";
 
 export default function Header() {
@@ -11,6 +12,7 @@ export default function Header() {
 					FoodWin
 				</Link>
 				<MobileNav className="md:hidden" />
+				<MainNav className="hidden md:block" />
 			</div>
 		</div>
 	);
