@@ -14,7 +14,6 @@ export default function MobileNavLink() {
 			<Button
 				className="flex-1 font-bold bg-orange-500"
 				onClick={async () => await logout()}>
-				{" "}
 				Log out
 			</Button>
 		</>
