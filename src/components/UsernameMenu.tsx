@@ -19,7 +19,7 @@ export default function UsernameMenu() {
 				{user?.email}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className=" flex flex-col items-center space-y-1 ">
-				<DropdownMenuItem>
+				<DropdownMenuItem className="outline-none">
 					<Link
 						to="/user-profile"
 						className="font-bold hover:text-orange-500 outline-none">
