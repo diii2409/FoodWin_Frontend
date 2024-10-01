@@ -29,9 +29,10 @@ type UserFormData = z.infer<typeof formSchema>;
 type Props = {
 	onSave: (UserProfileData: UserFormData) => void;
 	isLoading: boolean;
+	user?: UserFormData;
 };
 
-const UserProfileForm = ({onSave, isLoading}: Props) => {
+const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(formSchema),
 	});
@@ -56,7 +57,13 @@ const UserProfileForm = ({onSave, isLoading}: Props) => {
 						<FormItem>
 							<FormLabel>Email</FormLabel>
 							<FormControl className="flex-1">
-								<Input {...field} disabled className="bg-white" type="email" />
+								<Input
+									{...field}
+									disabled
+									defaultValue={user?.email}
+									className="bg-white"
+									type="email"
+								/>
 							</FormControl>
 						</FormItem>
 					)}
@@ -70,7 +77,11 @@ const UserProfileForm = ({onSave, isLoading}: Props) => {
 						<FormItem>
 							<FormLabel>Name</FormLabel>
 							<FormControl className="flex-1">
-								<Input {...field} className="bg-white" />
+								<Input
+									{...field}
+									defaultValue={user?.name}
+									className="bg-white"
+								/>
 							</FormControl>
 							<FormMessage />
 						</FormItem>
@@ -87,7 +98,11 @@ const UserProfileForm = ({onSave, isLoading}: Props) => {
 							<FormItem className="flex-1">
 								<FormLabel>Address</FormLabel>
 								<FormControl>
-									<Input {...field} className="bg-white" />
+									<Input
+										{...field}
+										defaultValue={user?.addressLine1}
+										className="bg-white"
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -102,7 +117,11 @@ const UserProfileForm = ({onSave, isLoading}: Props) => {
 							<FormItem className="flex-1">
 								<FormLabel>City</FormLabel>
 								<FormControl>
-									<Input {...field} className="bg-white" />
+									<Input
+										{...field}
+										defaultValue={user?.city}
+										className="bg-white"
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -117,7 +136,11 @@ const UserProfileForm = ({onSave, isLoading}: Props) => {
 							<FormItem className="flex-1">
 								<FormLabel>Country</FormLabel>
 								<FormControl>
-									<Input {...field} className="bg-white" />
+									<Input
+										{...field}
+										defaultValue={user?.country}
+										className="bg-white"
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
