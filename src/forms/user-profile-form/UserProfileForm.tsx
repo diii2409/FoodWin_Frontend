@@ -12,6 +12,7 @@ import {Input} from "@/components/ui/input";
 import LoadingButton from "@/components/ui/LoadingButton";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useForm} from "react-hook-form";
+import {ToastContainer} from "react-toastify";
 import {z} from "zod";
 // Định nghĩa schema cho dữ liệu của form
 const formSchema = z.object({
@@ -38,128 +39,131 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 	});
 
 	return (
-		<Form {...form}>
-			<form
-				onSubmit={form.handleSubmit(onSave)}
-				className="space-y-4 bg-gray-100 rounded-lg p-2 md:p-10">
-				<div>
-					<h2 className="text-2xl font-bold">User Profile Form</h2>
-					<FormDescription>
-						View and change your user profile information here.
-					</FormDescription>
-				</div>
+		<>
+			<Form {...form}>
+				<form
+					onSubmit={form.handleSubmit(onSave)}
+					className="space-y-4 bg-gray-100 rounded-lg p-2 md:p-10">
+					<div>
+						<h2 className="text-2xl font-bold">User Profile Form</h2>
+						<FormDescription>
+							View and change your user profile information here.
+						</FormDescription>
+					</div>
 
-				{/* Input email */}
-				<FormField
-					control={form.control}
-					name="email"
-					render={({field}) => (
-						<FormItem>
-							<FormLabel>Email</FormLabel>
-							<FormControl className="flex-1">
-								<Input
-									{...field}
-									disabled
-									defaultValue={user?.email}
-									className="bg-white"
-									type="email"
-								/>
-							</FormControl>
-						</FormItem>
+					{/* Input email */}
+					<FormField
+						control={form.control}
+						name="email"
+						render={({field}) => (
+							<FormItem>
+								<FormLabel>Email</FormLabel>
+								<FormControl className="flex-1">
+									<Input
+										{...field}
+										disabled
+										defaultValue={user?.email}
+										className="bg-white"
+										type="email"
+									/>
+								</FormControl>
+							</FormItem>
+						)}
+					/>
+
+					{/* Input name */}
+					<FormField
+						control={form.control}
+						name="name"
+						render={({field}) => (
+							<FormItem>
+								<FormLabel>Name</FormLabel>
+								<FormControl className="flex-1">
+									<Input
+										{...field}
+										defaultValue={user?.name}
+										className="bg-white"
+									/>
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					{/* Input address */}
+					<div className="flex flex-col md:flex-row gap-4">
+						{/* Input addressLine1 */}
+						<FormField
+							control={form.control}
+							name="addressLine1"
+							render={({field}) => (
+								<FormItem className="flex-1">
+									<FormLabel>Address</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											defaultValue={user?.addressLine1}
+											className="bg-white"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Input city */}
+						<FormField
+							control={form.control}
+							name="city"
+							render={({field}) => (
+								<FormItem className="flex-1">
+									<FormLabel>City</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											defaultValue={user?.city}
+											className="bg-white"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+
+						{/* Input country */}
+						<FormField
+							control={form.control}
+							name="country"
+							render={({field}) => (
+								<FormItem className="flex-1">
+									<FormLabel>Country</FormLabel>
+									<FormControl>
+										<Input
+											{...field}
+											defaultValue={user?.country}
+											className="bg-white"
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+					</div>
+
+					{/* Nút lưu */}
+					{isLoading ? (
+						<LoadingButton>Loading</LoadingButton>
+					) : (
+						<Button
+							type="submit"
+							className="bg-orange-500 text-white font-bold w-full md:w-fit">
+							Submit
+						</Button>
 					)}
-				/>
-
-				{/* Input name */}
-				<FormField
-					control={form.control}
-					name="name"
-					render={({field}) => (
-						<FormItem>
-							<FormLabel>Name</FormLabel>
-							<FormControl className="flex-1">
-								<Input
-									{...field}
-									defaultValue={user?.name}
-									className="bg-white"
-								/>
-							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				{/* Input address */}
-				<div className="flex flex-col md:flex-row gap-4">
-					{/* Input addressLine1 */}
-					<FormField
-						control={form.control}
-						name="addressLine1"
-						render={({field}) => (
-							<FormItem className="flex-1">
-								<FormLabel>Address</FormLabel>
-								<FormControl>
-									<Input
-										{...field}
-										defaultValue={user?.addressLine1}
-										className="bg-white"
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					{/* Input city */}
-					<FormField
-						control={form.control}
-						name="city"
-						render={({field}) => (
-							<FormItem className="flex-1">
-								<FormLabel>City</FormLabel>
-								<FormControl>
-									<Input
-										{...field}
-										defaultValue={user?.city}
-										className="bg-white"
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-
-					{/* Input country */}
-					<FormField
-						control={form.control}
-						name="country"
-						render={({field}) => (
-							<FormItem className="flex-1">
-								<FormLabel>Country</FormLabel>
-								<FormControl>
-									<Input
-										{...field}
-										defaultValue={user?.country}
-										className="bg-white"
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-				</div>
-
-				{/* Nút lưu */}
-				{isLoading ? (
-					<LoadingButton>Loading</LoadingButton>
-				) : (
-					<Button
-						type="submit"
-						className="bg-orange-500 text-white font-bold w-full md:w-fit">
-						Submit
-					</Button>
-				)}
-			</form>
-		</Form>
+				</form>
+			</Form>
+			<ToastContainer limit={3} />
+		</>
 	);
 };
 

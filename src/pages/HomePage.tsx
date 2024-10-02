@@ -1,8 +1,11 @@
 import {Layout} from "@/layouts";
+import {toast} from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import appDownloadImage from "../assets/appDownload.png";
 import langingImage from "../assets/landing.png";
 
 export default function HomePage() {
+	const notify = () => toast("Wow so easy!");
 	return (
 		<Layout showHero>
 			<div className="flex flex-col gap-12">
