@@ -6,6 +6,47 @@ import "react-toastify/dist/ReactToastify.css";
 
 const API_BASE_URL = import.meta.env.VITE_BASIC_API_URL;
 
+// Axios instance with interceptors
+const axiosInstance = axios.create({
+	baseURL: API_BASE_URL,
+	headers: {
+		"Content-Type": "application/json",
+	},
+});
+
+// Request interceptor: Attach token to request
+axiosInstance.interceptors.request.use(
+	async config => {
+		const {getAccessTokenSilently} = useAuth0();
+		const token = await getAccessTokenSilently();
+
+		if (token) {
+			config.headers["Authorization"] = `Bearer ${token}`;
+		}
+
+		return config;
+	},
+	error => {
+		return Promise.reject(error);
+	},
+);
+
+// Response interceptor: Handle responses globally
+axiosInstance.interceptors.response.use(
+	response => {
+		return response;
+	},
+	error => {
+		// Handle errors globally
+		if (error.response?.status === 401) {
+			toast.error("Unauthorized! Please log in again.");
+		} else if (error.response?.status === 500) {
+			toast.error("Server error! Please try again later.");
+		}
+		return Promise.reject(error);
+	},
+);
+
 type CreateUserRequest = {
 	auth0Id: string;
 	email: string;
@@ -13,21 +54,8 @@ type CreateUserRequest = {
 
 // Hook to create user
 export const useCreateUser = () => {
-	const {getAccessTokenSilently} = useAuth0();
-
 	const createMyUserRequest = async (user: CreateUserRequest) => {
-		const accessToken = await getAccessTokenSilently();
-		axios
-			.post(`${API_BASE_URL}/api/my/user`, user, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
-			})
-			.catch(function (error) {
-				// handle error
-				console.log(error);
-			});
+		await axiosInstance.post("/api/my/user", user);
 	};
 
 	const {
@@ -49,21 +77,8 @@ type UpdateUserRequest = {
 
 // Hook to update user
 export const useUpdateMyUser = () => {
-	const {getAccessTokenSilently} = useAuth0();
-
 	const updateMyUserRequest = async (formData: UpdateUserRequest) => {
-		const accessToken = await getAccessTokenSilently();
-		axios
-			.put(`${API_BASE_URL}/api/my/user`, formData, {
-				headers: {
-					Authorization: `Bearer ${accessToken}`,
-					"Content-Type": "application/json",
-				},
-			})
-			.catch(function (error) {
-				// handle error
-				console.log(error);
-			});
+		await axiosInstance.put("/api/my/user", formData);
 	};
 
 	const {
