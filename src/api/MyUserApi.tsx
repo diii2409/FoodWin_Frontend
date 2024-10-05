@@ -15,21 +15,21 @@ const axiosInstance = axios.create({
 });
 
 // Request interceptor: Attach token to request
-axiosInstance.interceptors.request.use(
-	async config => {
-		const {getAccessTokenSilently} = useAuth0();
-		const token = await getAccessTokenSilently();
+// axiosInstance.interceptors.request.use(
+// 	async config => {
+// 		const {getAccessTokenSilently} = useAuth0();
+// 		const token = await getAccessTokenSilently();
 
-		if (token) {
-			config.headers["Authorization"] = `Bearer ${token}`;
-		}
+// 		if (token) {
+// 			config.headers["Authorization"] = `Bearer ${token}`;
+// 		}
 
-		return config;
-	},
-	error => {
-		return Promise.reject(error);
-	},
-);
+// 		return config;
+// 	},
+// 	error => {
+// 		return Promise.reject(error);
+// 	},
+// );
 
 // Response interceptor: Handle responses globally
 axiosInstance.interceptors.response.use(
@@ -54,8 +54,14 @@ type CreateUserRequest = {
 
 // Hook to create user
 export const useCreateUser = () => {
+	const {getAccessTokenSilently} = useAuth0();
 	const createMyUserRequest = async (user: CreateUserRequest) => {
-		await axiosInstance.post("/api/my/user", user);
+		const token = await getAccessTokenSilently();
+		await axiosInstance.post("/api/my/user", user, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
 	};
 
 	const {
@@ -77,8 +83,19 @@ type UpdateUserRequest = {
 
 // Hook to update user
 export const useUpdateMyUser = () => {
+	const {getAccessTokenSilently} = useAuth0();
+
 	const updateMyUserRequest = async (formData: UpdateUserRequest) => {
-		await axiosInstance.put("/api/my/user", formData);
+		const token = await getAccessTokenSilently();
+		const response = await axiosInstance.put("/api/my/user", formData, {
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		if (response.status !== 200) {
+			throw new Error("Failed to update user");
+		}
+		return response.data;
 	};
 
 	const {
@@ -100,7 +117,8 @@ export const useUpdateMyUser = () => {
 			});
 		},
 		onError: error => {
-			toast.error((error as Error).toString());
+			toast.error("Error updating user profile");
+			console.log(error);
 			reset();
 		},
 	});
