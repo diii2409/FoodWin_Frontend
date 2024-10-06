@@ -1,13 +1,9 @@
-import {Layout} from "@/layouts";
-import {toast} from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import appDownloadImage from "../assets/appDownload.png";
 import langingImage from "../assets/landing.png";
 
 export default function HomePage() {
-	const notify = () => toast("Wow so easy!");
 	return (
-		<Layout showHero>
+		<>
 			<div className="flex flex-col gap-12">
 				<div className="bg-white rounded-lg shadow-md py-8 flex flex-col gap-5 text-center -mt-16">
 					<h1 className="text-5xl font-bold tracking-tight text-orange-500 ">
@@ -29,6 +25,6 @@ export default function HomePage() {
 					</div>
 				</div>
 			</div>
-		</Layout>
+		</>
 	);
 }

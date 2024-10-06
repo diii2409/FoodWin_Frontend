@@ -1,5 +1,6 @@
 import {useAxiosWithAuth} from "@/hooks/useAxiosWithAuth";
-import {useMutation} from "react-query";
+import {User} from "@/types";
+import {useMutation, useQuery} from "react-query";
 import {Bounce, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -70,4 +71,29 @@ export const useUpdateMyUser = () => {
 	});
 
 	return {updateUser, isLoading};
+};
+
+// Hook to get user
+export const useGetMyUser = () => {
+	const axiosInstance = useAxiosWithAuth();
+
+	const getMyUserRequest = async (): Promise<User> => {
+		const response = await axiosInstance.get("/api/my/user");
+		if (response.status !== 200) {
+			throw new Error("Failed to get user");
+		}
+		return response.data;
+	};
+
+	const {
+		data: currentUser,
+		isLoading,
+		error,
+	} = useQuery("fetchCurrentUser", getMyUserRequest);
+	if (error) {
+		console.log(error);
+		toast.error("Error fetching user profile");
+	}
+
+	return {currentUser, isLoading};
 };

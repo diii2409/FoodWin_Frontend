@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import LoadingButton from "@/components/ui/LoadingButton";
+import {User} from "@/types";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useEffect} from "react";
 import {useForm} from "react-hook-form";
 import {ToastContainer} from "react-toastify";
 import {z} from "zod";
@@ -30,13 +32,17 @@ type UserFormData = z.infer<typeof formSchema>;
 type Props = {
 	onSave: (UserProfileData: UserFormData) => void;
 	isLoading: boolean;
-	user?: UserFormData;
+	user?: User;
 };
 
 const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(formSchema),
+		defaultValues: user,
 	});
+	useEffect(() => {
+		form.reset(user);
+	}, [user, form]);
 
 	return (
 		<>
@@ -62,7 +68,6 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 									<Input
 										{...field}
 										disabled
-										defaultValue={user?.email}
 										className="bg-white"
 										type="email"
 									/>
@@ -79,11 +84,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 							<FormItem>
 								<FormLabel>Name</FormLabel>
 								<FormControl className="flex-1">
-									<Input
-										{...field}
-										defaultValue={user?.name}
-										className="bg-white"
-									/>
+									<Input {...field} className="bg-white" value={user?.name} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -102,8 +103,8 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 									<FormControl>
 										<Input
 											{...field}
-											defaultValue={user?.addressLine1}
 											className="bg-white"
+											value={user?.addressLine1}
 										/>
 									</FormControl>
 									<FormMessage />
@@ -119,11 +120,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 								<FormItem className="flex-1">
 									<FormLabel>City</FormLabel>
 									<FormControl>
-										<Input
-											{...field}
-											defaultValue={user?.city}
-											className="bg-white"
-										/>
+										<Input {...field} className="bg-white" value={user?.city} />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -140,8 +137,8 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 									<FormControl>
 										<Input
 											{...field}
-											defaultValue={user?.country}
 											className="bg-white"
+											value={user?.country}
 										/>
 									</FormControl>
 									<FormMessage />
