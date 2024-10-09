@@ -12,7 +12,7 @@ import {
 } from "./ui/sheet";
 
 export default function MobileNav({className = ""}: {className?: string}) {
-	const {loginWithRedirect, isAuthenticated, user, logout} = useAuth0();
+	const {loginWithRedirect, isAuthenticated, user} = useAuth0();
 	return (
 		<Sheet>
 			<SheetTrigger className={className}>
