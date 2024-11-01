@@ -1,8 +1,10 @@
 import {useAxiosWithAuth} from "@/hooks/useAxiosWithAuth";
 import {User} from "@/types";
-import {useMutation, useQuery} from "react-query";
+import {useMutation, useQuery} from "@tanstack/react-query";
 import {Bounce, toast} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import {useQueryClient} from "@tanstack/react-query";
 
 type CreateUserRequest = {
 	auth0Id: string;
@@ -18,12 +20,14 @@ export const useCreateUser = () => {
 
 	const {
 		mutateAsync: createUser,
-		isLoading,
+		isPending,
 		isError,
 		isSuccess,
-	} = useMutation(createMyUserRequest);
+	} = useMutation({
+		mutationFn: createMyUserRequest,
+	});
 
-	return {createUser, isLoading, isError, isSuccess};
+	return {createUser, isPending, isError, isSuccess};
 };
 
 type UpdateUserRequest = {
@@ -36,6 +40,7 @@ type UpdateUserRequest = {
 // Hook to update user
 export const useUpdateMyUser = () => {
 	const axiosInstance = useAxiosWithAuth();
+	const queryClient = useQueryClient();
 
 	const updateMyUserRequest = async (formData: UpdateUserRequest) => {
 		const response = await axiosInstance.put("/api/my/user", formData);
@@ -47,9 +52,10 @@ export const useUpdateMyUser = () => {
 
 	const {
 		mutateAsync: updateUser,
-		isLoading,
+		isPending,
 		reset,
-	} = useMutation(updateMyUserRequest, {
+	} = useMutation({
+		mutationFn: updateMyUserRequest,
 		onSuccess: () => {
 			toast.success("User profile updated!", {
 				position: "top-right",
@@ -62,15 +68,28 @@ export const useUpdateMyUser = () => {
 				theme: "light",
 				transition: Bounce,
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["fetchCurrentUser"],
+			});
 		},
 		onError: error => {
-			toast.error("Error updating user profile");
+			toast.error("Error updating user profile", {
+				position: "top-right",
+				autoClose: 1000,
+				hideProgressBar: false,
+				closeOnClick: true,
+				pauseOnHover: true,
+				draggable: true,
+				progress: undefined,
+				theme: "light",
+				transition: Bounce,
+			});
 			console.log(error);
 			reset();
 		},
 	});
 
-	return {updateUser, isLoading};
+	return {updateUser, isPending};
 };
 
 // Hook to get user
@@ -87,13 +106,16 @@ export const useGetMyUser = () => {
 
 	const {
 		data: currentUser,
-		isLoading,
+		isPending,
 		error,
-	} = useQuery("fetchCurrentUser", getMyUserRequest);
+	} = useQuery({
+		queryKey: ["fetchCurrentUser"],
+		queryFn: getMyUserRequest,
+	});
 	if (error) {
 		console.log(error);
 		toast.error("Error fetching user profile");
 	}
 
-	return {currentUser, isLoading};
+	return {currentUser, isPending};
 };

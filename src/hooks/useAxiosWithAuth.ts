@@ -6,7 +6,8 @@ const API_BASE_URL = import.meta.env.VITE_BASIC_API_URL;
 const axiosInstance = axios.create({
 	baseURL: API_BASE_URL,
 	headers: {
-		"Content-Type": "application/json",
+		// "Content-Type": "application/json",
+		// "Content-Type": "multipart/form-data",
 	},
 });
 
@@ -37,9 +38,11 @@ export const useAxiosWithAuth = () => {
 		response => response,
 		error => {
 			if (error.response?.status === 401) {
+				// console.log("error", error.response.data);
 				console.error("Unauthorized access, please login again.");
 				// Redirect user or logout
 			} else if (error.response?.status === 500) {
+				// console.log("error", error.response.data);
 				console.error("Internal server error, please try again later.");
 			}
 			return Promise.reject(error);

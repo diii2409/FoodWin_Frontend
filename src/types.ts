@@ -5,6 +5,8 @@ export type User = {
 	addressLine1: string;
 	city: string;
 	country: string;
+	updatedAt: string;
+	createdAt: string;
 };
 
 export type MenuItem = {
@@ -24,7 +26,8 @@ export type Restaurant = {
 	cuisines: string[];
 	menuItems: MenuItem[];
 	imageUrl: string;
-	lastUpdated: string;
+	updatedAt: string;
+	createdAt: string;
 };
 
 export type OrderStatus =

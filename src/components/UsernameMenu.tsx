@@ -8,7 +8,6 @@ import {
 	DropdownMenuContent,
 	DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import {Separator} from "./ui/separator";
 
 export default function UsernameMenu() {
 	const {user, logout} = useAuth0();
@@ -19,14 +18,20 @@ export default function UsernameMenu() {
 				{user?.email}
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className=" flex flex-col items-center space-y-1 ">
-				<DropdownMenuItem className="outline-none">
+				<DropdownMenuItem className="outline-none p-1">
 					<Link
-						to="/user-profile"
-						className="font-bold hover:text-orange-500 outline-none">
+						to="/manage-restaurant"
+						className="font-bold hover:text-orange-500 
+						">
+						Manage Restaurant
+					</Link>
+				</DropdownMenuItem>
+				<DropdownMenuItem className="outline-none p-1">
+					<Link to="/user-profile" className="font-bold hover:text-orange-500">
 						User Profile
 					</Link>
 				</DropdownMenuItem>
-				<Separator />
+				{/* <Separator /> */}
 				<DropdownMenuItem>
 					<Button
 						className="flex flex-1 font-bold bg-orange-500"
