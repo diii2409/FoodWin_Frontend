@@ -1,25 +1,15 @@
 // src/api/MyRestaurantApi.tsx
 import {useAxiosWithAuth} from "@/hooks/useAxiosWithAuth";
 import {Restaurant} from "@/types";
-import {useMutation} from "@tanstack/react-query";
-import {Bounce, toast} from "react-toastify";
+import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
+import {toast} from "react-toastify";
 
 export const useCreateMyRestaurant = () => {
 	const axiosInstance = useAxiosWithAuth();
 
-	const createRestaurantRequest = async (
-		restaurant: FormData,
-	): Promise<Restaurant> => {
-		const response = await axiosInstance.post(
-			"/api/my/restaurant",
-			restaurant,
-			{
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			},
-		);
-		if (response.status !== 201) {
+	const createRestaurantRequest = async (restaurant: FormData): Promise<Restaurant> => {
+		const response = await axiosInstance.post("/api/my/restaurant", restaurant);
+		if (response.status !== 200) {
 			console.log("error", response.data);
 			throw new Error("Failed to create restaurant");
 		}
@@ -38,17 +28,7 @@ export const useCreateMyRestaurant = () => {
 		},
 		onError: (error: any) => {
 			if (error.response.status === 409) {
-				toast.error("You already have a restaurant.", {
-					position: "top-right",
-					autoClose: 1000,
-					hideProgressBar: false,
-					closeOnClick: true,
-					pauseOnHover: true,
-					draggable: true,
-					progress: undefined,
-					theme: "light",
-					transition: Bounce,
-				});
+				toast.error("You already have a restaurant!");
 			} else {
 				toast.error("Failed to create restaurant. Please try again.");
 			}
@@ -57,4 +37,61 @@ export const useCreateMyRestaurant = () => {
 	});
 
 	return {createRestaurant, isPending, isSuccess, error};
+};
+
+export const useGetMyRestaurant = () => {
+	const axiosInstance = useAxiosWithAuth();
+
+	const getRestaurantRequest = async (): Promise<Restaurant> => {
+		const response = await axiosInstance.get("/api/my/restaurant");
+		if (response.status !== 200) {
+			throw new Error("Failed to get restaurant");
+		}
+		return response.data;
+	};
+
+	const {
+		data: currentRestaurant,
+		isPending,
+		error,
+	} = useQuery({
+		queryKey: ["fetchMyRestaurant"],
+		queryFn: getRestaurantRequest,
+	});
+
+	if (error) {
+		console.error(error);
+		toast.error("Failed to get restaurant");
+	}
+
+	return {currentRestaurant, isPending};
+};
+
+export const useMyUpdateRestaurant = () => {
+	const axiosInstance = useAxiosWithAuth();
+	const queryClient = useQueryClient();
+
+	const updateRestaurantRequest = async (restaurant: FormData) => {
+		const response = await axiosInstance.put("/api/my/restaurant", restaurant);
+		if (response.status !== 200) {
+			throw new Error("Failed to update restaurant");
+		}
+		return response.data;
+	};
+
+	const {mutate: updateRestaurant, isPending} = useMutation({
+		mutationFn: updateRestaurantRequest,
+		onSuccess: () => {
+			toast.success("Restaurant updated successfully!");
+			queryClient.invalidateQueries({
+				queryKey: ["fetchMyRestaurant"],
+			});
+		},
+		onError: (error: any) => {
+			toast.error("Failed to update restaurant. Please try again.");
+			console.error(error);
+		},
+	});
+
+	return {updateRestaurant, isPending};
 };

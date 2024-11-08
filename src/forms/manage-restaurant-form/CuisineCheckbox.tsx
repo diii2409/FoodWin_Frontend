@@ -13,7 +13,7 @@ const CuisineCheckbox = ({cuisine, field}: Props) => {
 		<FormItem className="flex flex-row items-center space-x-1 space-y-0 mt-2">
 			<FormControl>
 				<Checkbox
-					// name={cuisine}
+					name={cuisine}
 					className="bg-white"
 					checked={checked}
 					onCheckedChange={checked => {
@@ -26,7 +26,7 @@ const CuisineCheckbox = ({cuisine, field}: Props) => {
 				/>
 			</FormControl>
 
-			<input type="hidden"  name="custId" value={checked ? cuisine : ""}/>
+			<input type="hidden" name="custId" value={checked ? cuisine : ""} />
 			<FormLabel>{cuisine}</FormLabel>
 		</FormItem>
 	);

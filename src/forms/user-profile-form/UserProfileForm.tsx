@@ -1,3 +1,4 @@
+import {useGetMyUser, useUpdateMyUser} from "@/api/MyUserApi";
 import {Button} from "@/components/ui/button";
 import {
 	Form,
@@ -10,7 +11,6 @@ import {
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import LoadingButton from "@/components/ui/LoadingButton";
-import {User} from "@/types";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
@@ -29,26 +29,37 @@ const formSchema = z.object({
 type UserFormData = z.infer<typeof formSchema>;
 
 // Props cho component UserProfileForm
-type Props = {
-	onSave: (UserProfileData: UserFormData) => void;
-	isLoading: boolean;
-	user?: User;
-};
 
-const UserProfileForm = ({onSave, isLoading, user}: Props) => {
+const UserProfileForm = () => {
+	const {updateUser, isPending} = useUpdateMyUser();
+	const {currentUser: user, isPending: isPendingGetUset} = useGetMyUser();
+
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(formSchema),
-		defaultValues: user,
+		defaultValues: user || {
+			email: "",
+			name: "",
+			addressLine1: "",
+			city: "",
+			country: "",
+		},
 	});
+
 	useEffect(() => {
 		form.reset(user);
 	}, [user, form]);
+
+	if (isPendingGetUset) {
+		return <div>Loading...</div>;
+	} else if (!user) {
+		return <div>unable to load user profile</div>;
+	}
 
 	return (
 		<>
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(onSave)}
+					onSubmit={form.handleSubmit(data => updateUser(data))}
 					className="space-y-4 bg-gray-100 rounded-lg p-2 md:p-10">
 					<div>
 						<h2 className="text-2xl font-bold">User Profile Form</h2>
@@ -84,7 +95,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 							<FormItem>
 								<FormLabel>Name</FormLabel>
 								<FormControl className="flex-1">
-									<Input {...field} className="bg-white" value={user?.name} />
+									<Input {...field} className="bg-white" />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
@@ -101,11 +112,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 								<FormItem className="flex-1">
 									<FormLabel>Address</FormLabel>
 									<FormControl>
-										<Input
-											{...field}
-											className="bg-white"
-											value={user?.addressLine1}
-										/>
+										<Input {...field} className="bg-white" />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -120,7 +127,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 								<FormItem className="flex-1">
 									<FormLabel>City</FormLabel>
 									<FormControl>
-										<Input {...field} className="bg-white" value={user?.city} />
+										<Input {...field} className="bg-white" />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -135,11 +142,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 								<FormItem className="flex-1">
 									<FormLabel>Country</FormLabel>
 									<FormControl>
-										<Input
-											{...field}
-											className="bg-white"
-											value={user?.country}
-										/>
+										<Input {...field} className="bg-white" />
 									</FormControl>
 									<FormMessage />
 								</FormItem>
@@ -148,7 +151,7 @@ const UserProfileForm = ({onSave, isLoading, user}: Props) => {
 					</div>
 
 					{/* Nút lưu */}
-					{isLoading ? (
+					{isPending ? (
 						<LoadingButton>Loading</LoadingButton>
 					) : (
 						<Button

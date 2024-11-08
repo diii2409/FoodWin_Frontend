@@ -38,11 +38,9 @@ export const useAxiosWithAuth = () => {
 		response => response,
 		error => {
 			if (error.response?.status === 401) {
-				// console.log("error", error.response.data);
 				console.error("Unauthorized access, please login again.");
 				// Redirect user or logout
 			} else if (error.response?.status === 500) {
-				// console.log("error", error.response.data);
 				console.error("Internal server error, please try again later.");
 			}
 			return Promise.reject(error);

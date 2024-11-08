@@ -115,7 +115,7 @@ export const useGetMyUser = () => {
 	if (error) {
 		console.log(error);
 		toast.error("Error fetching user profile");
-	}
+	} 
 
 	return {currentUser, isPending};
 };
