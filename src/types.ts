@@ -30,12 +30,7 @@ export type Restaurant = {
 	createdAt: string;
 };
 
-export type OrderStatus =
-	| "placed"
-	| "paid"
-	| "inProgress"
-	| "outForDelivery"
-	| "delivered";
+export type OrderStatus = "placed" | "paid" | "inProgress" | "outForDelivery" | "delivered";
 
 export type Order = {
 	_id: string;

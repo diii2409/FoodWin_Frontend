@@ -54,7 +54,7 @@ type restaurantFormData = z.infer<typeof formSchema>;
 
 const ManageRestaurantForm = () => {
 	const [key, setKey] = useState(0);
-	const {createRestaurant, isPending: isPendingCreateRestaurant} = useCreateMyRestaurant();
+	// const {createRestaurant, isPending: isPendingCreateRestaurant} = useCreateMyRestaurant();
 	const {updateRestaurant, isPending: isPendingUpdateRestaurant} = useMyUpdateRestaurant();
 	const {currentRestaurant, isPending: isPendingGetRestaurant} = useGetMyRestaurant();
 	const form = useForm<restaurantFormData>({
@@ -81,30 +81,31 @@ const ManageRestaurantForm = () => {
 		});
 	}, [currentRestaurant, form]);
 
-	const onsubmit = async (_: restaurantFormData, e: any) => {
+	const onsubmit = async (data: restaurantFormData, e: any) => {
 		const formData = new FormData(e.target as HTMLFormElement);
-		const custId = formData.getAll("custId");
-		let index = 0;
-		custId.forEach(cuisine => {
-			if (cuisine !== "") {
-				formData.append(`cuisines[${index++}]`, cuisine);
+		// const custId = formData.getAll("custId");
+		// let index = 0;
+		// custId.forEach(cuisine => {
+		// 	if (cuisine !== "") {
+		// 		formData.append(`cuisines[${index++}]`, cuisine);
+		// 	}
+		// });
+		// formData.delete("custId");
+		const cuisines = data.cuisines;
+		console.log(cuisines);
+		cuisines.forEach((cuisine, index) => {
+			if (cuisine) {
+				formData.append(`cuisines[${index}]`, cuisine);
 			}
 		});
 		formData.delete("custId");
-
-		currentRestaurant?.restaurantName
-			? updateRestaurant(formData, {
-					onSuccess() {
-						setKey(key + 1);
-						form.reset();
-					},
-			  })
-			: createRestaurant(formData, {
-					onSuccess() {
-						form.reset();
-						setKey(key + 1);
-					},
-			  });
+		console.log("currentRestaurant?.restaurantName", currentRestaurant?.restaurantName);
+		updateRestaurant(formData, {
+			onSuccess() {
+				setKey(key + 1);
+				form.reset();
+			},
+		});
 	};
 
 	if (isPendingGetRestaurant) {
@@ -127,11 +128,7 @@ const ManageRestaurantForm = () => {
 					<MenuSection />
 					<Separator />
 					<ImageSection />
-					{isPendingCreateRestaurant || isPendingUpdateRestaurant ? (
-						<LoadingButton />
-					) : (
-						<Button type="submit">Submit</Button>
-					)}
+					{isPendingUpdateRestaurant ? <LoadingButton /> : <Button type="submit">Submit</Button>}
 				</form>
 			</Form>
 			<ToastContainer limit={3} />
