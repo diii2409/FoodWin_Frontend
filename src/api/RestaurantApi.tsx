@@ -1,6 +1,6 @@
 import {useAxiosWithAuth} from "@/hooks/useAxiosWithAuth";
 import {SearchState} from "@/pages/SearchPage";
-import {RestaurantSearchResponse} from "@/types";
+import {Restaurant, RestaurantSearchResponse} from "@/types";
 import {useQuery} from "@tanstack/react-query";
 import {toast} from "react-toastify";
 
@@ -42,4 +42,28 @@ export const useSearchRestaurants = (searchSate?: SearchState, city?: string) =>
 	}
 
 	return {results, isLoading};
+};
+
+export const useGetRestaurant = (restaurantId?: string) => {
+	const axiosInstance = useAxiosWithAuth();
+	const getRestaurantRequest = async (): Promise<Restaurant> => {
+		const response = await axiosInstance.get(`/api/restaurants/${restaurantId}`);
+		if (response.status !== 200) {
+			throw new Error("Failed to get restaurant");
+		}
+		return response.data;
+	};
+	const {
+		data: restaurant,
+		error,
+		isLoading,
+	} = useQuery({
+		queryKey: ["getRestaurant", restaurantId],
+		queryFn: getRestaurantRequest,
+		enabled: !!restaurantId,
+	});
+	if (error) {
+		console.log(error);
+	}
+	return {restaurant, isLoading};
 };
