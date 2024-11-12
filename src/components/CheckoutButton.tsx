@@ -4,12 +4,16 @@ import {useLocation} from "react-router-dom";
 import {Button} from "./ui/button";
 import {Dialog, DialogContent, DialogTrigger} from "./ui/dialog";
 import LoadingButton from "./ui/LoadingButton";
+import { CardItem } from "@/pages/DetallPage";
+import { Restaurant } from "@/types";
 
 type Props = {
 	disabled: boolean;
+	cartItems?: CardItem[];
+	restaurant?: Restaurant;
 };
 
-export default function CheckoutButton({disabled}: Props) {
+export default function CheckoutButton({disabled, cartItems, restaurant}: Props) {
 	const {isAuthenticated, isLoading, loginWithRedirect} = useAuth0();
 
 	const {pathname} = useLocation();
@@ -36,8 +40,8 @@ export default function CheckoutButton({disabled}: Props) {
 					Checkout
 				</Button>
 			</DialogTrigger>
-			<DialogContent className={"max-w-[425px] md:min-w-[700px] "}>
-				<UserProfileForm title="Confirm Delivery Details" buttonText="Continue to payment" />
+			<DialogContent className={"max-w-[425px] md:min-w-[700px] gap-0 "}>
+				<UserProfileForm title="Confirm Delivery Details" buttonText="Continue to payment" cartItems={cartItems} restaurant={restaurant} />
 			</DialogContent>
 		</Dialog>
 	);

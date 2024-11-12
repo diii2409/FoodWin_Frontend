@@ -12,7 +12,7 @@ const MenuItem = ({menuItem, addToCart}: Props) => {
 			<CardHeader>
 				<CardTitle>{menuItem.name}</CardTitle>
 			</CardHeader>
-			<CardContent className="font-bold">{menuItem.price} vnd</CardContent>
+			<CardContent className="font-bold">{menuItem.price} $</CardContent>
 		</Card>
 	);
 };

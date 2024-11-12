@@ -3,18 +3,18 @@ import axios from "axios";
 
 const API_BASE_URL = import.meta.env.VITE_BASIC_API_URL;
 // init axios instance
-const axiosInstance = axios.create({
-	baseURL: API_BASE_URL,
-	headers: {
-		// "Content-Type": "application/json",
-		// "Content-Type": "multipart/form-data",
-	},
-});
 
 // This function helps inject the token into request headers
 export const useAxiosWithAuth = () => {
-	// Interceptor request to automatically add token to headers
 	const {getAccessTokenSilently} = useAuth0();
+	const axiosInstance = axios.create({
+		baseURL: API_BASE_URL,
+		headers: {
+			// "Content-Type": "application/json",
+			// "Content-Type": "multipart/form-data",
+		},
+	});
+
 	axiosInstance.interceptors.request.use(
 		async config => {
 			try {

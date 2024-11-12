@@ -32,10 +32,10 @@ const OrderSummary = ({restaurant, cartItems, removeCartItem}: Props) => {
 							<Badge variant="outline" className="mr-2">
 								{item.quantity}
 							</Badge>
-							<span className="truncate max-w-28 block">{item.name}</span>
+							<span className="xl:truncate xl:max-w-28 block">{item.name}</span>
 						</span>
 						<span className="flex items-center gap-1">
-							{item.price * item.quantity} vnd{" "}
+							{item.price * item.quantity} ${" "}
 							<Trash2
 								className={"text-red-600 cursor-pointer hover:text-black"}
 								onClick={() => removeCartItem(item)}
@@ -46,12 +46,12 @@ const OrderSummary = ({restaurant, cartItems, removeCartItem}: Props) => {
 				<Separator />
 				<div className="flex justify-between">
 					<span>Delivery</span>
-					<span>{restaurant?.deliveryPrice} vnd</span>
+					<span>{restaurant?.deliveryPrice} $</span>
 				</div>
 				<Separator />
 				<div className="flex justify-between ">
 					<span>Total</span>
-					<span className="text-xl font-bold tracking-tight">{getTotalCost()} vnd</span>
+					<span className="text-xl font-bold tracking-tight">{getTotalCost()} $</span>
 				</div>
 				<Separator />
 			</CardContent>

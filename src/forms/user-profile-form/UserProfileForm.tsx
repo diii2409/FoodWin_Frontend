@@ -1,4 +1,5 @@
 import {useGetMyUser, useUpdateMyUser} from "@/api/MyUserApi";
+import {useCreateCheckoutSession} from "@/api/OrderApi";
 import {Button} from "@/components/ui/button";
 import {
 	Form,
@@ -11,10 +12,11 @@ import {
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import LoadingButton from "@/components/ui/LoadingButton";
+import {CardItem} from "@/pages/DetallPage";
+import {Restaurant} from "@/types";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect} from "react";
 import {useForm} from "react-hook-form";
-import {ToastContainer} from "react-toastify";
 import {z} from "zod";
 // Định nghĩa schema cho dữ liệu của form
 const formSchema = z.object({
@@ -33,12 +35,20 @@ export type UserFormData = z.infer<typeof formSchema>;
 type Props = {
 	title?: string;
 	buttonText?: string;
+	cartItems?: CardItem[];
+	restaurant?: Restaurant;
 };
 
-const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: Props) => {
-	const {updateUser, isPending} = useUpdateMyUser();
+const UserProfileForm = ({
+	title = "User Profile Form",
+	buttonText = "Submit",
+	cartItems,
+	restaurant,
+}: Props) => {
+	const {updateUser, isPending: isPendingUpdateUser} = useUpdateMyUser();
 	const {currentUser: user, isPending: isPendingGetUset} = useGetMyUser();
-
+	const {createCheckoutSession, isPending: isPendingCreateCheckoutSession} =
+		useCreateCheckoutSession();
 	const form = useForm<UserFormData>({
 		resolver: zodResolver(formSchema),
 		defaultValues: user || {
@@ -49,7 +59,31 @@ const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: P
 			country: "",
 		},
 	});
+	const handleCheckout = async (data: UserFormData) => {
+		if (!restaurant) {
+			return;
+		}
+		const totalAmount =
+			(cartItems?.reduce((acc, item) => acc + item.price * item.quantity, 0) || 0) +
+			restaurant.deliveryPrice;
 
+		const checkoutData = {
+			cartItems:
+				cartItems?.map(cartItem => ({
+					menuItemId: cartItem._id,
+					name: cartItem.name,
+					quantity: cartItem.quantity,
+				})) || [],
+			restaurantId: restaurant?._id,
+			deliveryDetails: {
+				...data,
+				email: data.email || "",
+			},
+			totalAmount,
+		};
+		const dataCheckout = await createCheckoutSession(checkoutData);
+		window.location.href = dataCheckout.url;
+	};
 	const handleSubmit = (data: UserFormData) => {
 		updateUser(data);
 	};
@@ -67,7 +101,9 @@ const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: P
 		<>
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(handleSubmit)}
+					onSubmit={form.handleSubmit(
+						title === "User Profile Form" ? handleSubmit : handleCheckout,
+					)}
 					className="space-y-4 bg-gray-100 rounded-lg p-2 md:p-10">
 					<div>
 						<h2 className="text-2xl font-bold">{title}</h2>
@@ -152,7 +188,7 @@ const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: P
 					</div>
 
 					{/* Nút lưu */}
-					{isPending ? (
+					{isPendingUpdateUser || isPendingCreateCheckoutSession ? (
 						<LoadingButton>Loading</LoadingButton>
 					) : (
 						<Button type="submit" className="bg-orange-500 text-white font-bold w-full md:w-fit">
@@ -161,7 +197,6 @@ const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: P
 					)}
 				</form>
 			</Form>
-			<ToastContainer limit={3} />
 		</>
 	);
 };

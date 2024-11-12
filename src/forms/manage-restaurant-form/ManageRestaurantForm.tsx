@@ -1,8 +1,4 @@
-import {
-	useCreateMyRestaurant,
-	useGetMyRestaurant,
-	useMyUpdateRestaurant,
-} from "@/api/MyRestaurantApi";
+import {useGetMyRestaurant, useMyUpdateRestaurant} from "@/api/MyRestaurantApi";
 import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import LoadingButton from "@/components/ui/LoadingButton";
@@ -10,7 +6,6 @@ import {Separator} from "@/components/ui/separator";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
-import {ToastContainer} from "react-toastify";
 import {z} from "zod";
 import CuisinesSection from "./CuisinesSection";
 import DetailSection from "./DetailSection";
@@ -39,7 +34,7 @@ const formSchema = z
 						required_error: "Price is required",
 						invalid_type_error: "Price must be a valid number",
 					})
-					.min(1000, {message: "Price must be greater than 1000 vnd"}),
+					.min(1, {message: "Price must be greater than 1000 $"}),
 			}),
 		),
 		imageFile: z.instanceof(File, {message: "Image file is required"}).optional(),
@@ -131,7 +126,6 @@ const ManageRestaurantForm = () => {
 					{isPendingUpdateRestaurant ? <LoadingButton /> : <Button type="submit">Submit</Button>}
 				</form>
 			</Form>
-			<ToastContainer limit={3} />
 		</>
 	);
 };

@@ -103,7 +103,11 @@ export default function DetallPage() {
 							removeCartItem={removeCartItem}
 						/>
 						<CardFooter>
-							<CheckoutButton disabled={cartItem.length === 0} />
+							<CheckoutButton
+								disabled={cartItem.length === 0}
+								cartItems={cartItem}
+								restaurant={restaurant}
+							/>
 						</CardFooter>
 					</Card>
 				</div>
