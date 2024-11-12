@@ -1,8 +1,9 @@
 import {useGetRestaurant} from "@/api/RestaurantApi";
+import CheckoutButton from "@/components/CheckoutButton";
 import MenuItem from "@/components/MenuItem";
 import OrderSummary from "@/components/OrderSummary";
 import RestaurantInfo from "@/components/RestaurantInfo";
-import {Card} from "@/components/ui/card";
+import {Card, CardFooter} from "@/components/ui/card";
 import {AspectRatio} from "@radix-ui/react-aspect-ratio";
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
@@ -96,7 +97,14 @@ export default function DetallPage() {
 				</div>
 				<div>
 					<Card>
-						<OrderSummary restaurant={restaurant} cartItems={cartItem} removeCartItem={removeCartItem}/>
+						<OrderSummary
+							restaurant={restaurant}
+							cartItems={cartItem}
+							removeCartItem={removeCartItem}
+						/>
+						<CardFooter>
+							<CheckoutButton disabled={cartItem.length === 0} />
+						</CardFooter>
 					</Card>
 				</div>
 			</div>

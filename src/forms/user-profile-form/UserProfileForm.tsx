@@ -26,11 +26,16 @@ const formSchema = z.object({
 });
 
 // Xác định kiểu dữ liệu của form
-type UserFormData = z.infer<typeof formSchema>;
+export type UserFormData = z.infer<typeof formSchema>;
 
 // Props cho component UserProfileForm
 
-const UserProfileForm = () => {
+type Props = {
+	title?: string;
+	buttonText?: string;
+};
+
+const UserProfileForm = ({title = "User Profile Form", buttonText = "Submit"}: Props) => {
 	const {updateUser, isPending} = useUpdateMyUser();
 	const {currentUser: user, isPending: isPendingGetUset} = useGetMyUser();
 
@@ -45,6 +50,9 @@ const UserProfileForm = () => {
 		},
 	});
 
+	const handleSubmit = (data: UserFormData) => {
+		updateUser(data);
+	};
 	useEffect(() => {
 		form.reset(user);
 	}, [user, form]);
@@ -59,13 +67,11 @@ const UserProfileForm = () => {
 		<>
 			<Form {...form}>
 				<form
-					onSubmit={form.handleSubmit(data => updateUser(data))}
+					onSubmit={form.handleSubmit(handleSubmit)}
 					className="space-y-4 bg-gray-100 rounded-lg p-2 md:p-10">
 					<div>
-						<h2 className="text-2xl font-bold">User Profile Form</h2>
-						<FormDescription>
-							View and change your user profile information here.
-						</FormDescription>
+						<h2 className="text-2xl font-bold">{title}</h2>
+						<FormDescription>View and change your user profile information here.</FormDescription>
 					</div>
 
 					{/* Input email */}
@@ -76,12 +82,7 @@ const UserProfileForm = () => {
 							<FormItem>
 								<FormLabel>Email</FormLabel>
 								<FormControl className="flex-1">
-									<Input
-										{...field}
-										disabled
-										className="bg-white"
-										type="email"
-									/>
+									<Input {...field} disabled className="bg-white" type="email" />
 								</FormControl>
 							</FormItem>
 						)}
@@ -154,10 +155,8 @@ const UserProfileForm = () => {
 					{isPending ? (
 						<LoadingButton>Loading</LoadingButton>
 					) : (
-						<Button
-							type="submit"
-							className="bg-orange-500 text-white font-bold w-full md:w-fit">
-							Submit
+						<Button type="submit" className="bg-orange-500 text-white font-bold w-full md:w-fit">
+							{buttonText}
 						</Button>
 					)}
 				</form>
