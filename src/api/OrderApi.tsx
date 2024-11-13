@@ -44,8 +44,9 @@ export const useGetMyOrders = (page?: number) => {
 		error,
 		refetch,
 	} = useQuery({
-		queryKey: ["fetchMyOrders", page], 
+		queryKey: ["fetchMyOrders"],
 		queryFn: getMyOrdersRequest,
+		refetchInterval: 5000,
 	});
 	if (error) {
 		console.error("Failed to get orders", error);
