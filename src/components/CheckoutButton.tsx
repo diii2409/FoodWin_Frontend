@@ -1,11 +1,11 @@
 import {UserProfileForm} from "@/forms/user-profile-form";
+import {CardItem} from "@/pages/DetallPage";
+import {Restaurant} from "@/types";
 import {useAuth0} from "@auth0/auth0-react";
 import {useLocation} from "react-router-dom";
 import {Button} from "./ui/button";
-import {Dialog, DialogContent, DialogTrigger} from "./ui/dialog";
+import {Dialog, DialogContent, DialogTitle, DialogTrigger} from "./ui/dialog";
 import LoadingButton from "./ui/LoadingButton";
-import { CardItem } from "@/pages/DetallPage";
-import { Restaurant } from "@/types";
 
 type Props = {
 	disabled: boolean;
@@ -41,7 +41,13 @@ export default function CheckoutButton({disabled, cartItems, restaurant}: Props)
 				</Button>
 			</DialogTrigger>
 			<DialogContent className={"max-w-[425px] md:min-w-[700px] gap-0 "}>
-				<UserProfileForm title="Confirm Delivery Details" buttonText="Continue to payment" cartItems={cartItems} restaurant={restaurant} />
+				<DialogTitle />
+				<UserProfileForm
+					title="Confirm Delivery Details"
+					buttonText="Continue to payment"
+					cartItems={cartItems}
+					restaurant={restaurant}
+				/>
 			</DialogContent>
 		</Dialog>
 	);

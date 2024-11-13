@@ -62,6 +62,15 @@ export type RestaurantSearchResponse = {
 	};
 };
 
+export type OrderSearchResponse = {
+	data: Order[];
+	pagination: {
+		total: number;
+		page: number;
+		pages: number;
+	};
+};
+
 export type CheckoutSessionRequest = {
 	cartItems: {
 		menuItemId: string;

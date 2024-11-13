@@ -82,6 +82,7 @@ const UserProfileForm = ({
 			totalAmount,
 		};
 		const dataCheckout = await createCheckoutSession(checkoutData);
+		sessionStorage.removeItem(`cartItems-${restaurant._id}`);
 		window.location.href = dataCheckout.url;
 	};
 	const handleSubmit = (data: UserFormData) => {

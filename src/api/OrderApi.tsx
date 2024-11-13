@@ -1,6 +1,6 @@
 import {useAxiosWithAuth} from "@/hooks/useAxiosWithAuth";
-import {CheckoutSessionRequest} from "@/types";
-import {useMutation} from "@tanstack/react-query";
+import {CheckoutSessionRequest, OrderSearchResponse} from "@/types";
+import {useMutation, useQuery} from "@tanstack/react-query";
 export const useCreateCheckoutSession = () => {
 	const axiosInstance = useAxiosWithAuth();
 	const createCheckoutSessionRequest = async (checkoutSessionRequest: CheckoutSessionRequest) => {
@@ -27,4 +27,29 @@ export const useCreateCheckoutSession = () => {
 		reset();
 	}
 	return {createCheckoutSession, isPending, isSuccess};
+};
+
+export const useGetMyOrders = (page?: number) => {
+	const axiosInstance = useAxiosWithAuth();
+	const getMyOrdersRequest = async (): Promise<OrderSearchResponse> => {
+		const response = await axiosInstance.get("/api/order", {params: {page}});
+		if (response.status !== 200) {
+			throw new Error("Failed to get orders");
+		}
+		return response.data;
+	};
+	const {
+		data: results,
+		isLoading,
+		error,
+		refetch,
+	} = useQuery({
+		queryKey: ["fetchMyOrders", page], 
+		queryFn: getMyOrdersRequest,
+	});
+	if (error) {
+		console.error("Failed to get orders", error);
+	}
+
+	return {results, isLoading, refetch};
 };
