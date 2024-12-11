@@ -3,6 +3,7 @@ import {Button} from "@/components/ui/button";
 import {Form} from "@/components/ui/form";
 import LoadingButton from "@/components/ui/LoadingButton";
 import {Separator} from "@/components/ui/separator";
+import {changeImage, extractPublicIdFromUrl, uploadImage} from "@/plugin/cloudary";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
@@ -86,8 +87,20 @@ const ManageRestaurantForm = () => {
 		// 	}
 		// });
 		// formData.delete("custId");
+
 		const cuisines = data.cuisines;
-		console.log(cuisines);
+		console.log("currentRestaurant", currentRestaurant?.imageUrl);
+		console.log("fileImage", data.imageFile);
+		console.log("fileURL", data.imageUrl);
+		console.log("dieu kien", currentRestaurant?.imageUrl && data.imageFile);
+		if (currentRestaurant?.imageUrl && data.imageFile) {
+			const publicId = extractPublicIdFromUrl(currentRestaurant?.imageUrl) as string;
+			const imageUrl = await changeImage(publicId, data.imageFile);
+			formData.append("imageUrl", imageUrl);
+		} else if (!currentRestaurant?.imageUrl && data.imageFile) {
+			const imageUrl = await uploadImage(data.imageFile);
+			formData.append("imageUrl", imageUrl);
+		}
 		cuisines.forEach((cuisine, index) => {
 			if (cuisine) {
 				formData.append(`cuisines[${index}]`, cuisine);
